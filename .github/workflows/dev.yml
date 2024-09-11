@@ -20,27 +20,39 @@ jobs:
         service: ['customer', 'gateway', 'products', 'shopping']
     steps:
       - uses: actions/checkout@v4
+    
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-            node-version: ${{ matrix.node-version }}
-      - name: Clean Install
+          node-version: ${{ matrix.node-version }}
+        
+      - name: Install dependencies
         run: |
-            cd ./${{ matrix.service }}
-            npm install
-      - name: Run and Build the project
+          cd ./${{ matrix.service }}
+          npm ci
+        
+      - name: Run Build
         run: |
-            cd ./${{ matrix.service }}
-            npm run build --if-present
-      - name: Test the project
+          cd ./${{ matrix.service }}
+          npm run build --if-present
+        
+      - name: Run Tests
         run: |
-            cd ./${{ matrix.service }}
-            npm test
-
-      - name: Upload artifact for deployment job
+          cd ./${{ matrix.service }}
+          npm test
+        
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.service }}-app
+          name: ${{ matrix.service }}-build
           path: ./${{ matrix.service }}
 
 # Deploy All Microservice docker images to DockerHub      
