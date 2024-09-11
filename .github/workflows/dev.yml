@@ -25,14 +25,14 @@ jobs:
       - name: Check for changes in microservice
         id: check_changes
         run: |
-          if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+          if git rev-parse --verify HEAD^ ; then
             # Compare against the previous commit
             git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
           else
             # First commit or no prior commit, compare against an empty tree
             git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
           fi
-          
+
       - name: Use Node.js
         if: env.changes == 'true'
         uses: actions/setup-node@v4
