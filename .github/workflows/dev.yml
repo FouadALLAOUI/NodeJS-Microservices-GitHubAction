@@ -25,10 +25,12 @@ jobs:
       - name: Check for changes in microservice
         id: check_changes
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.service }}/"; then
-            echo "changes=true" >> $GITHUB_ENV
+          if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+            # There's a previous commit, use 'git diff' as normal
+            git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
           else
-            echo "changes=false" >> $GITHUB_ENV
+            # No previous commit, compare against an empty tree
+            git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
           fi
 
       - name: Use Node.js
@@ -38,7 +40,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
         
       - name: Install dependencies
-        if: env.changes == 'true'
         run: |
           cd ./${{ matrix.service }}
           npm ci
