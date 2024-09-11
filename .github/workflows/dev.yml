@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Fetch full commit history, not a shallow clone
 
       - name: Check for changes in microservice
         id: check_changes
