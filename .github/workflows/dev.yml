@@ -31,7 +31,8 @@ jobs:
           else
             # First commit or no prior commit, compare against an empty tree
             git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
-
+          fi
+          
       - name: Use Node.js
         if: env.changes == 'true'
         uses: actions/setup-node@v4
