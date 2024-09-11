@@ -47,6 +47,9 @@ jobs:
 # Deploy All Microservice docker images to DockerHub      
   Deploy_To_DockerHub:
     runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          service: ['customer', 'gateway', 'products', 'shopping']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +67,7 @@ jobs:
         with:
           context: ./${{matrix.service}}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{matrix.service}}:${{github.run_id}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ ${{ matrix.service }}:${{github.run_id}}
 
 ## Deploy All Microservice docker images to ACR
 #  Deploy_To_ACR:
