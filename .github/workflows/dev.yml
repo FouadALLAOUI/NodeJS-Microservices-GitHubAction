@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: ['18.x', '20.x']
-        service: ['customer', 'gateway', 'products', 'proxy', 'shopping']
+        service: ['customer', 'gateway', 'products', 'shopping']
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
