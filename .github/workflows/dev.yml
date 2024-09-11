@@ -26,12 +26,11 @@ jobs:
         id: check_changes
         run: |
           if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
-            # There's a previous commit, use 'git diff' as normal
+            # Compare against the previous commit
             git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
           else
-            # No previous commit, compare against an empty tree
+            # First commit or no prior commit, compare against an empty tree
             git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q "^${{ matrix.service }}/" && echo "changes=true" >> $GITHUB_ENV || echo "changes=false" >> $GITHUB_ENV
-          fi
 
       - name: Use Node.js
         if: env.changes == 'true'
@@ -40,6 +39,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
         
       - name: Install dependencies
+        if: env.changes == 'true'
         run: |
           cd ./${{ matrix.service }}
           npm ci
@@ -56,12 +56,12 @@ jobs:
           cd ./${{ matrix.service }}
           npm test
         
-      - name: Upload build artifact for ${{ matrix.service }}
-        if: env.changes == 'true'
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.service }}-build
-          path: ./${{ matrix.service }}
+      #- name: Upload build artifact for ${{ matrix.service }}
+      #  if: env.changes == 'true'
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: ${{ matrix.service }}-build
+      #    path: ./${{ matrix.service }}
 
 # Deploy All Microservice docker images to DockerHub      
   Deploy_To_DockerHub:
