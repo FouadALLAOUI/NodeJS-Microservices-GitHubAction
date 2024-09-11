@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['18.x', '20.x']
+        node-version: ['20.x']
         service: ['customer', 'gateway', 'products', 'shopping']
     steps:
       - uses: actions/checkout@v4
@@ -25,10 +25,9 @@ jobs:
         with:
             node-version: ${{ matrix.node-version }}
       - name: Clean Install
-        
         run: |
             cd ${{ matrix.service }}
-            npm ci
+            npm install
       - name: Run and Build the project
         run: |
             cd ${{ matrix.service }}
