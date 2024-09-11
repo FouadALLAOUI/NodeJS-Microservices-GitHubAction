@@ -49,7 +49,7 @@ jobs:
           cd ./${{ matrix.service }}
           npm test
         
-      - name: Upload artifact for deployment
+      - name: Upload build artifact for ${{ matrix.service }}
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.service }}-build
