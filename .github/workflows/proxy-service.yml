@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env: 
-  MICROSERVICE_NAME : 'products'
+  MICROSERVICE_NAME : 'proxy'
 
 jobs:
     
